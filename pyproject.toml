@@ -1,0 +1,28 @@
+[project]
+name = "snakemake-storage-plugin-apd"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.11,<4.0"
+dependencies = ["snakemake-interface-common (>=1.17.4,<2.0.0)", "snakemake-interface-storage-plugins (>=3.3.0,<4.0.0)"]
+repository = "https://github.com/your/plugin"
+documentation = "https://snakemake.github.io/snakemake-plugin-catalog/plugins/storage/apd.html"
+[[project.authors]]
+name = "mmonk"
+email = "matthew.david.monk@cern.ch"
+
+[build-system]
+requires = [ "poetry-core>=2.0.0,<3.0.0",]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+[[tool.poetry.packages]]
+include = "snakemake_storage_plugin_apd"
+from = "src"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.9.10"
+coverage = "^7.6.12"
+pytest = "^8.3.5"
+
