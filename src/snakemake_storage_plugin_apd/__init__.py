@@ -49,14 +49,16 @@ xrootd_retry = retry(
 
 @dataclass
 class StorageProviderSettings(StorageProviderSettingsBase):
-    working_group: str = field(
+    working_group: Optional[str] = field(
+        default=None,
         metadata={
             "help": "Working group of the analysis e.g. bnoc",
             "env_var": True,
             "required": True,
         }
     )
-    analysis: str = field(
+    analysis: Optional[str] = field(
+        default=None,
         metadata={
             "help": "Name of the analysis e.g. bds2kstkstb",
             "env_var": True,
@@ -90,7 +92,7 @@ class StorageProvider(StorageProviderBase):
         ]
 
     def get_files(self, query: dict) -> List[str]:
-        return self.datasets(**self.query)
+        return self.datasets(**query)
 
     def _check_status(self, status: XRootDStatus, error_preamble: str):
         if not status.ok:
@@ -104,7 +106,7 @@ class StorageProvider(StorageProviderBase):
         least one)."""
         return [
             ExampleQuery(
-                query={"polarity": ["magup"], eventtype="13104007", datatype="11"},
+                query={"polarity": ["magup"], eventtype: "13104007", datatype: "11"},
                 description="An example apd query",
                 type=QueryType.ANY,
             ),
