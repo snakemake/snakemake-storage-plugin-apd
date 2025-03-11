@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 readme = "README.md"
 requires-python = ">=3.11,<4.0"
-dependencies = ["snakemake-interface-common (>=1.17.4,<2.0.0)", "snakemake-interface-storage-plugins (>=3.3.0,<4.0.0)"]
+dependencies = ["snakemake-interface-common (>=1.17.4,<2.0.0)", "snakemake-interface-storage-plugins (>=3.3.0,<4.0.0)", "apd (>=0.8.1)", "xrootd (>=5.7.3)"]
 repository = "https://github.com/your/plugin"
 documentation = "https://snakemake.github.io/snakemake-plugin-catalog/plugins/storage/apd.html"
 [[project.authors]]
@@ -25,4 +25,4 @@ from = "src"
 ruff = "^0.9.10"
 coverage = "^7.6.12"
 pytest = "^8.3.5"
-
+snakemake = "^8.18.0"
