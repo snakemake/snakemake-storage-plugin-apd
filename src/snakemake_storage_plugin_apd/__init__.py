@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 import os
-from typing import Any, Iterable, Optional, List, Type, Callable
+from typing import Any, Iterable, Optional, List, Type
 
 from reretry import retry
 
@@ -55,7 +55,7 @@ class StorageProviderSettings(StorageProviderSettingsBase):
             "help": "Working group of the analysis e.g. bnoc",
             "env_var": True,
             "required": True,
-        }
+        },
     )
     analysis: Optional[str] = field(
         default=None,
@@ -63,7 +63,7 @@ class StorageProviderSettings(StorageProviderSettingsBase):
             "help": "Name of the analysis e.g. bds2kstkstb",
             "env_var": True,
             "required": True,
-        }
+        },
     )
 
 
@@ -106,7 +106,11 @@ class StorageProvider(StorageProviderBase):
         least one)."""
         return [
             ExampleQuery(
-                query={"polarity": ["magup"], eventtype: "13104007", datatype: "11"},
+                query={
+                    "polarity": ["magup"],
+                    "eventtype": "13104007",
+                    "datatype": "11",
+                },
                 description="An example apd query",
                 type=QueryType.ANY,
             ),
@@ -153,7 +157,7 @@ class StorageProvider(StorageProviderBase):
         full_url = URL(query)
         if not full_url.is_valid():
             raise WorkflowError(
-                f"XRootD Error: URL {self._safe_to_print_url(new_url)} is invalid"
+                f"XRootD Error: URL {self._safe_to_print_url(full_url)} is invalid"
             )
 
         dirname, filename = os.path.split(full_url.path)
