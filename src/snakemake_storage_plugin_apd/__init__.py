@@ -8,7 +8,7 @@ from XRootD import client
 from XRootD.client.flags import MkDirFlags, StatInfoFlags
 from XRootD.client.responses import XRootDStatus
 from XRootD.client import URL
-from apd import get_analysis_data
+from apd import get_analysis_data, auth, authw
 
 from snakemake.exceptions import WorkflowError
 
@@ -54,7 +54,7 @@ class StorageProviderSettings(StorageProviderSettingsBase):
         metadata={
             "help": "Working group of the analysis e.g. bnoc",
             "env_var": True,
-            "required": True,
+            "required": False,
         },
     )
     analysis: Optional[str] = field(
@@ -62,7 +62,16 @@ class StorageProviderSettings(StorageProviderSettingsBase):
         metadata={
             "help": "Name of the analysis e.g. bds2kstkstb",
             "env_var": True,
-            "required": True,
+            "required": False,
+        },
+    )
+    readonly: Optional[bool] = field(
+        default=True,
+        metadata={
+            "help": "Whether access is read-only (True by default). Set to False to"
+            "allow write access",
+            "env_var": False,
+            "requried": False,
         },
     )
 
@@ -71,7 +80,9 @@ class StorageProvider(StorageProviderBase):
     def __post_init__(self):
         self.wg = self.settings.working_group
         self.analysis = self.settings.analysis
-        self.datasets = get_analysis_data(self.wg, self.analysis)
+        self.readonly = self.settings.readonly
+        if self.wg is not None and self.analysis is not None:
+            self.datasets = get_analysis_data(self.wg, self.analysis)
         # List of error codes that there is no point in retrying
         self.no_retry_codes = [
             3000,
@@ -92,7 +103,8 @@ class StorageProvider(StorageProviderBase):
         ]
 
     def get_files(self, query: dict) -> List[str]:
-        return self.datasets(**query)
+        auth_func = auth if self.readonly else authw
+        return [auth_func(f) for f in self.datasets(**query)]
 
     def _check_status(self, status: XRootDStatus, error_preamble: str):
         if not status.ok:
