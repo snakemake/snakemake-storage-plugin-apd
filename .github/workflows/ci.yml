@@ -6,65 +6,31 @@ on:
       - main
   pull_request:
 
-env:
-  PYTHON_VERSION: 3.11
+defaults:
+  run:
+    shell: bash -leo pipefail {0} {0}
 
 jobs:
-  linting:
+  pre-commit:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the code
         uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
+      - uses: prefix-dev/setup-pixi@v0.8.3
 
-      - name: Install poetry
-        run: pip install poetry
+      - name: Run pre-commit
+        run: pixi exec pre-commit run --all-files
 
-      - name: Determine dependencies
-        run: poetry lock
+        # testing:
+        #   runs-on: ubuntu-latest
+        #   steps:
+        #     - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: poetry
+        #     - uses: prefix-dev/setup-pixi@v0.8.3
 
-      - name: Install Dependencies using Poetry
-        run: poetry install
+        #     - name: Run pytest
+        #       run: pixi run test-coverage
 
-      - name: Check formatting
-        run: poetry run ruff format --check .
-      
-      - name: Lint
-        run: poetry run ruff check .
-
-  testing:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install poetry
-        run: pip install poetry
-
-      - name: Determine dependencies
-        run: poetry lock
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: poetry
-
-      - name: Install dependencies
-        run: poetry install
-
-      - name: Run pytest
-        run: poetry run coverage run -m pytest
-
-      - name: Run Coverage
-        run: poetry run coverage report -m
+        #     - name: Run coverage
+        #       run: pixi run coverage-report

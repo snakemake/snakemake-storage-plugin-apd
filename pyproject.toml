@@ -1,28 +1,49 @@
 [project]
 name = "snakemake-storage-plugin-apd"
-version = "0.1.0"
-description = ""
+dynamic = ["version"]
+description = "A Snakemake storage plugin for the LHCb apd API."
+authors = [
+    {name = "Chris Burr", email = "christopher.burr@cern.ch"},
+    {name = "Matthew Monk", email = "matthew.david.monk@cern.ch"}
+]
 readme = "README.md"
-requires-python = ">=3.11,<4.0"
-dependencies = ["snakemake-interface-common (>=1.17.4,<2.0.0)", "snakemake-interface-storage-plugins (>=3.3.0,<4.0.0)", "apd (>=0.8.1)", "xrootd (>=5.7.3)"]
-repository = "https://github.com/your/plugin"
-documentation = "https://snakemake.github.io/snakemake-plugin-catalog/plugins/storage/apd.html"
-[[project.authors]]
-name = "mmonk"
-email = "matthew.david.monk@cern.ch"
+dependencies = [
+  "snakemake-interface-common >=1.15.0,<2",
+  "snakemake-interface-storage-plugins >=3,<4",
+  "xrootd >=5.6,<6",
+  "snakemake >=8.18,<9",
+  "apd >=0.8.1,<1.0"
+]
+
+[project.urls]
+"Source code" = "https://github.com/snakemake/snakemake-storage-plugin-apd"
+Documentation = "https://snakemake.github.io/snakemake-plugin-catalog/plugins/storage/apd.html"
 
 [build-system]
-requires = [ "poetry-core>=2.0.0,<3.0.0",]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
-[[tool.poetry.packages]]
-include = "snakemake_storage_plugin_apd"
-from = "src"
+[dependency-groups]
+test = ["pytest", "coverage"]
 
+[tool.hatch.version]
+source = "vcs"
 
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.9.10"
-coverage = "^7.6.12"
-pytest = "^8.3.5"
-snakemake = "^8.18.0"
+[tool.pixi.project]
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "osx-arm64"]
+
+[tool.pixi.dependencies]
+xrootd = ">=5.7.3,<6"
+
+[tool.pixi.pypi-dependencies]
+snakemake-storage-plugin-apd = { path = ".", editable = true }
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+# test = { features = ["test"], solve-group = "default" }
+
+# [tool.pixi.feature.test.tasks]
+# test = "pytest -vv tests/tests.py"
+# test-coverage = "coverage run -m pytest -vv tests/tests.py"
+# coverage-report = "coverage report"
