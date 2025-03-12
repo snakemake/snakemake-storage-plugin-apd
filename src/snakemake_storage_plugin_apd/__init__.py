@@ -83,6 +83,7 @@ class StorageProvider(StorageProviderBase):
         self.readonly = self.settings.readonly
         if self.wg is not None and self.analysis is not None:
             self.datasets = get_analysis_data(self.wg, self.analysis)
+        self.base_provider = "xrootd"
         # List of error codes that there is no point in retrying
         self.no_retry_codes = [
             3000,
