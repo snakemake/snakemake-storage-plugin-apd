@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 name: release-please
 
@@ -13,29 +14,28 @@ jobs:
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           release-type: python
-          package-name: snakemake-storage-plugin-apd
+          package-name: snakemake-storage-plugin-xrootd
 
-  publish:
+  build-distributions:
     runs-on: ubuntu-latest
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created }}
     permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
     steps:
       - name: Check out the code
         uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      - uses: prefix-dev/setup-pixi@v0.8.3
 
-      - name: Install build
-        run: pip install build
+      - name: Build distributions
+        run: git fetch --tags && pixi exec python-build
 
-      - name: Build package
-        run: python -m build
+      - name: Check package metadata
+        run: pixi exec twine check dist/*
 
       - name: Publish package on PyPI
+        if: needs.release-please.outputs.release_created
         uses: pypa/gh-action-pypi-publish@release/v1
