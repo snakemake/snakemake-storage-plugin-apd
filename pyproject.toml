@@ -9,9 +9,8 @@ authors = [
 readme = "README.md"
 dependencies = [
   "snakemake-interface-common >=1.15.0,<2",
-  "snakemake-interface-storage-plugins >=3,<4",
+  "snakemake-interface-storage-plugins >=4.1,<5",
   "xrootd >=5.6,<6",
-  "snakemake >=8.18,<9",
   "apd >=0.8.1,<1.0"
 ]
 requires-python = ">= 3.11"
@@ -42,6 +41,11 @@ snakemake-storage-plugin-apd = { path = ".", editable = true }
 
 [tool.pixi.environments]
 default = { solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
+
+[tool.pixi.feature.test.pypi-dependencies]
+snakemake = ">=9.1.0,<10"
+
 # test = { features = ["test"], solve-group = "default" }
 
 # [tool.pixi.feature.test.tasks]
